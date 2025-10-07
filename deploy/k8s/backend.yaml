@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kolibri-backend
+  namespace: kolibri
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kolibri-backend
+  template:
+    metadata:
+      labels:
+        app: kolibri-backend
+    spec:
+      containers:
+        - name: backend
+          image: REPLACE_WITH_REGISTRY/kolibri-backend:RELEASE_TAG
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--listen"
+            - "4050"
+          ports:
+            - containerPort: 4050
+              name: http
+          env:
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kolibri-config
+                  key: LOG_LEVEL
+          readinessProbe:
+            tcpSocket:
+              port: 4050
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 4050
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kolibri-backend
+  namespace: kolibri
+spec:
+  selector:
+    app: kolibri-backend
+  ports:
+    - name: http
+      port: 4050
+      targetPort: 4050

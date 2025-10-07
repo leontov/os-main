@@ -1,0 +1,20 @@
+{
+  "name": "@kolibri/sdk",
+  "version": "0.5.0",
+  "description": "Kolibri Nano SDK for JavaScript",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "author": "Kolibri AI",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

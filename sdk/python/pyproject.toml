@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kolibri-sdk"
+version = "0.5.0"
+description = "Kolibri Nano SDK: autonomous χ→Φ→S inference engine bindings"
+readme = "README.md"
+authors = [{name = "Kolibri AI", email = "sdk@kolibri.ai"}]
+license = {text = "Proprietary"}
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.25",
+    "pydantic>=2.6",
+]
+
+[project.scripts]
+kolibri-cli = "kolibri_sdk.cli:main"
+
+[tool.setuptools.package-data]
+kolibri_sdk = ["py.typed"]
+
+[tool.setuptools.packages.find]
+where = ["."]

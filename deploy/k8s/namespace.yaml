@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kolibri
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kolibri-config
+  namespace: kolibri
+data:
+  LOG_LEVEL: "info"

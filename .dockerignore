@@ -1,0 +1,19 @@
+# Ignore git metadata
+.git
+.gitmodules
+
+# Build outputs
+build/
+dist/
+logs/
+
+# Python environments
+.venv/
+__pycache__/
+
+# Node artifacts
+frontend/node_modules/
+frontend/dist/
+
+# OS junk
+.DS_Store

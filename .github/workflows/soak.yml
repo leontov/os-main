@@ -1,0 +1,34 @@
+name: Kolibri Soak Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  soak:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install soak dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+      - name: Resume soak state
+        run: |
+          python scripts/soak.py --hours 4 --resume --state-path soak_state.json --metrics-path soak_metrics.csv
+      - name: Upload soak state
+        uses: actions/upload-artifact@v4
+        with:
+          name: soak-state
+          path: |
+            soak_state.json
+            soak_metrics.csv

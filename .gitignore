@@ -1,0 +1,12 @@
+/build/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/public/kolibri.wasm
+*.o
+*.a
+*.log
+*.dat
+root.key
+compile_commands.json
+.DS_Store

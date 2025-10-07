@@ -1,0 +1,30 @@
+name: Kolibri Watchdog
+
+on:
+  workflow_run:
+    workflows: [ 'Kolibri Soak Tests', 'Kolibri CI' ]
+    types:
+      - completed
+  schedule:
+    - cron: '30 2 * * *'
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install requests
+      - name: Evaluate workflows
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python scripts/post_pr_comment.py --watchdog --repository "$REPO"

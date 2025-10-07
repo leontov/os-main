@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kolibri-training
+  namespace: kolibri
+spec:
+  schedule: "0 */6 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: training
+              image: REPLACE_WITH_REGISTRY/kolibri-training:RELEASE_TAG
+              imagePullPolicy: IfNotPresent
+              args:
+                - "--hours"
+                - "6"
+                - "--state-path"
+                - "/app/data/soak_state.json"
+                - "--metrics-path"
+                - "/app/data/metrics.csv"
+              env:
+                - name: LOG_LEVEL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: kolibri-config
+                      key: LOG_LEVEL
+              volumeMounts:
+                - name: soak-state
+                  mountPath: /app/data
+          volumes:
+            - name: soak-state
+              persistentVolumeClaim:
+                claimName: kolibri-training-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kolibri-training-pvc
+  namespace: kolibri
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

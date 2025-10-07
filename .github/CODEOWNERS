@@ -1,0 +1,9 @@
+# Общие правила
+*                       @kolibri-maintainers
+
+# Области
+/backend/               @kolibri-core @kolibri-maintainers
+/apps/                  @kolibri-core @kolibri-maintainers
+/tests/                 @kolibri-core @kolibri-qa
+/docs/                  @kolibri-docs @kolibri-maintainers
+/.github/               @kolibri-ci @kolibri-maintainers
