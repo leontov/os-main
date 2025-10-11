@@ -1,2 +1,0 @@
-[console_scripts]
-kolibri-cli = kolibri_sdk.cli:main
