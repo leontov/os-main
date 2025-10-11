@@ -55,7 +55,8 @@ class FeedbackResponse(BaseModel):
 
 # Python 3.10+ поддерживает slots в dataclass; на более старших версиях используем обычный декоратор.
 if sys.version_info >= (3, 10):
-    dataclass_slots = lambda cls: dataclass(cls, slots=True)  # type: ignore[misc]
+    def dataclass_slots(cls):
+        return dataclass(cls, slots=True)  # type: ignore[misc]
 else:  # pragma: no cover - ветка для совместимости с Python < 3.10
     dataclass_slots = dataclass
 

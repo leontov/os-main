@@ -476,6 +476,96 @@ class KolibriSim:
 
         return dict(self.znanija)
 
+    # --- Agent integration hooks (lightweight and non-invasive) ---
+    def ustanovit_agent(self, agent: object) -> None:
+        """Привязывает агент к симулятору (неинвазивно сохраняет ссылку)."""
+
+        self._agent = agent
+        self._registrirovat("AGENT", f"set={getattr(agent, 'name', str(agent))}")
+
+    def run_agent_step(self) -> Optional[object]:
+        """Выполнить один шаг агента: observe -> decide -> act.
+
+        Возвращает результат agent.act или None. Если агент не задан — возбуждает RuntimeError.
+        """
+
+        if not hasattr(self, "_agent") or self._agent is None:
+            raise RuntimeError("agent not set; call ustanovit_agent() first")
+
+        try:
+            obs = self._agent.observe(self)
+        except Exception:
+            obs = {
+                "znanija_count": len(self.znanija),
+                "populyaciya": list(self.populyaciya),
+                "zhurnal": list(self.zhurnal[-5:]),
+            }
+
+        try:
+            decision = self._agent.decide(obs)
+        except Exception as e:  # pragma: no cover
+            self._registrirovat("AGENT_ERROR", f"decide failed: {e}")
+            return None
+
+        try:
+            result = self._agent.act(self, decision)
+            self._registrirovat("AGENT_STEP", f"action={getattr(decision, 'meta', {})}")
+            return result
+        except Exception as e:  # pragma: no cover
+            self._registrirovat("AGENT_ERROR", f"act failed: {e}")
+            return None
+
+    def run_agent_loop(self, steps: int = 1, delay: float = 0.0) -> List[Optional[object]]:
+        """Запустить агент несколько шагов подряд и вернуть список результатов."""
+
+        results: List[Optional[object]] = []
+        for _ in range(max(0, int(steps))):
+            res = self.run_agent_step()
+            results.append(res)
+            if delay and delay > 0:
+                time.sleep(delay)
+        return results
+
+    def save_agent_state(self, path: "Path | str") -> bool:
+        """Попросить агент сохранить своё состояние по пути, если поддерживает save_state."""
+
+        if not hasattr(self, "_agent") or self._agent is None:
+            return False
+        try:
+            if hasattr(self._agent, "save_state"):
+                self._agent.save_state(str(path))
+                self._registrirovat("AGENT_SAVE", str(path))
+                return True
+        except Exception:
+            return False
+        return False
+
+    def load_agent_state(self, path: "Path | str") -> bool:
+        """Попытка загрузить состояние агента из файла через LocalKolibriAgent.load_state."""
+
+        try:
+            from .agent import LocalKolibriAgent
+
+            agent = LocalKolibriAgent.load_state(str(path))
+            self.ustanovit_agent(agent)
+            self._registrirovat("AGENT_LOAD", str(path))
+            return True
+        except Exception:
+            return False
+
+    def exchange_formulas_with_peer(self, peer_formulas: Mapping[str, Any]) -> int:
+        """Простейшая синхронизация формул: импорт отсутствующих записей и возврат числа добавленных."""
+
+        added = 0
+        for name, record in peer_formulas.items():
+            if name not in self.formuly:
+                self.formuly[name] = record  # type: ignore[assignment]
+                self.populyaciya.append(name)
+                added += 1
+        if added:
+            self._registrirovat("EXCH_FORMULA", f"added={added}")
+        return added
+
     def ustanovit_predel_zhurnala(self, predel: int) -> None:
         """Задаёт максимальный размер журнала и немедленно усечает избыток."""
 

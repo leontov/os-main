@@ -1,7 +1,8 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, conint, conlist
-import os, subprocess
+import os
+import subprocess
 from pathlib import Path
 
 BIN = os.getenv("KNP_INFER_BIN", "apps/kolibri_infer")

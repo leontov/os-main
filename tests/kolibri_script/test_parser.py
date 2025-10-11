@@ -1,4 +1,4 @@
-import sys
+import sys  # noqa: E402
 import textwrap
 from pathlib import Path
 

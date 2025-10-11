@@ -1,0 +1,65 @@
+name: Build Release Artifacts
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for container builds)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build kolibri.wasm using emscripten docker image
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/project -w /project/scripts \
+            -e KOLIBRI_WASM_INCLUDE_GENOME=1 \
+            emscripten/emsdk:3.1.61 bash -lc './build_wasm.sh'
+
+      - name: Upload wasm artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kolibri-wasm
+          path: build/wasm/kolibri.wasm
+
+  package-release:
+    runs-on: ubuntu-latest
+    needs: build-wasm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore wasm
+        uses: actions/download-artifact@v4
+        with:
+          name: kolibri-wasm
+          path: build/wasm
+
+      - name: Build native (cmake)
+        run: |
+          sudo apt-get update && sudo apt-get install -y build-essential cmake ninja-build libssl-dev
+          cmake -S . -B build -G "Unix Makefiles" -DOPENSSL_ROOT_DIR=/usr
+          cmake --build build -j 2
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Create release package
+        run: |
+          mkdir -p dist/release
+          tar -czf dist/release/kolibri_release_${{ github.ref_name }}.tar.gz \
+            -C build kolibri_node libkolibri_core.a wasm \
+            frontend/dist
+
+      - name: Upload release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: kolibri-release
+          path: dist/release/kolibri_release_${{ github.ref_name }}.tar.gz

@@ -6,7 +6,7 @@ import asyncio
 from dataclasses import dataclass
 from pathlib import Path
 import json
-import sys
+import sys  # noqa: E402
 
 import pytest
 

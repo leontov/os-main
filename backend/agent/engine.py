@@ -30,8 +30,8 @@ def _chi(seed: int) -> float:
     b = _splitmix64(a ^ 0xD1B54A32D192ED03)
     u = _u64_to_unit(b)
     t = 1.0 - abs(2.0 * u - 1.0)
-    l = 4.0 * t * (1.0 - t)
-    return max(1e-16, min(0.5 * (t + l), 1.0 - 1e-16))
+    li = 4.0 * t * (1.0 - t)
+    return max(1e-16, min(0.5 * (t + li), 1.0 - 1e-16))
 
 
 def _chebyshev(z: float, k: int) -> float:

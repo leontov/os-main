@@ -1,0 +1,8 @@
+FROM ubuntu:24.04
+RUN apt-get update && apt-get install -y ca-certificates libssl3 libstdc++6 curl
+WORKDIR /opt/kolibri
+COPY build/kolibri_node /opt/kolibri/kolibri_node
+COPY build/wasm/kolibri.wasm /opt/kolibri/kolibri.wasm
+COPY frontend/dist /opt/kolibri/www
+EXPOSE 8000
+CMD ["/opt/kolibri/kolibri_node"]

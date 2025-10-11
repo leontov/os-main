@@ -11,8 +11,8 @@ interface KnowledgeRecord {
   id: string;
   title: string;
   content: string;
-  scoreBoost?: number;
-  source?: string;
+  scoreBoost: number;
+  source: string;
 }
 
 const frontendDir = fileURLToPath(new URL(".", import.meta.url));
@@ -64,6 +64,7 @@ const knowledgeBase: KnowledgeRecord[] = [
     content:
       "Kolibri AI объединяет эволюцию коротких формул и фрактальную память. Система ищет, мутирует и отбирает программы, " +
       "а знания хранятся в десятичной иерархии, где путь вроде 7→7.3→7.3.1 обозначает мысль.",
+    scoreBoost: 0,
     source: "docs/kolibri_integrated_prototype.md",
   },
   {
@@ -72,6 +73,7 @@ const knowledgeBase: KnowledgeRecord[] = [
     content:
       "Фрактальная память состоит из десятичных уровней. Каждый уровень содержит десять подузлов, что позволяет детализировать " +
       "понятия произвольной глубины. Активный путь показывает текущую мысль или контекст.",
+    scoreBoost: 0,
     source: "docs/kolibri_integrated_prototype.md",
   },
   {
@@ -80,6 +82,7 @@ const knowledgeBase: KnowledgeRecord[] = [
     content:
       "Kolibri Chain — микроблокчейн для фиксации происхождения формул и обмена знаниями между узлами. Он синхронизирует события " +
       "обучения и обеспечивает доверие к общему репозиторию знаний.",
+    scoreBoost: 0,
     source: "docs/kolibri_integrated_prototype.md",
   },
   {
@@ -88,6 +91,7 @@ const knowledgeBase: KnowledgeRecord[] = [
     content:
       "Kolibri использует WebAssembly ядро (kolibri.wasm), которое исполняет KolibriScript в браузере. React-интерфейс " +
       "предоставляет компоненты Chat, FractalMemory, RuleEditor и визуализирует состояние памяти.",
+    scoreBoost: 0,
     source: "docs/kolibri_integrated_prototype.md",
   },
   {
@@ -96,6 +100,7 @@ const knowledgeBase: KnowledgeRecord[] = [
     content:
       "Kolibri эволюционирует формулы: генерирует, мутирует и отбирает программы по метрикам пригодности. Популяция управляется " +
       "турнирами, а лучшие формулы получают повышенный вес.",
+    scoreBoost: 0,
     source: "docs/kolibri_integrated_prototype.md",
   },
   ...loadLongTermMemory(),

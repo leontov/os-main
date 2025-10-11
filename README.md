@@ -45,6 +45,14 @@
    ctest --test-dir build
    ```
 
+   ## Релизы и CI
+
+   Релизы собираются автоматически при push тега (workflow `.github/workflows/build_release.yml`). CI собирает `kolibri.wasm` внутри Docker (emscripten image) и пакует релиз.
+
+   Artifacts:
+   - `dist/release/kolibri_release_<tag>.tar.gz` — релизный tarball с нативным бинарником, wasm и фронтендом.
+   - `dist/kolibri_selfcontained.tar.gz` — локальный самодостаточный пакет для тестов.
+
 ## Проверки качества
 - Линтеры Python: `ruff check`, `pyright`
 - Политики проекта: `python scripts/policy_validate.py`
